@@ -1,0 +1,12 @@
+.idea
+.vscode
+.Ds_Store
+coverage.out
+frontApp
+logServiceApp
+mailerServiceApp
+authApp
+brokerApp
+listener
+frontEndLinux
+project/db-data
