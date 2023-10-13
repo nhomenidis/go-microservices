@@ -45,11 +45,6 @@ func (app *Config) HandleSubmission(writer http.ResponseWriter, request *http.Re
 	default:
 		common.ErrorJSON(writer, errors.New("invalid action"), http.StatusBadRequest)
 	}
-
-	out, _ := json.MarshalIndent(requestPayload, "", "\t")
-	writer.Header().Set("Content-Type", "application/json")
-	writer.WriteHeader(http.StatusAccepted)
-	writer.Write(out)
 }
 
 func (app *Config) authenticate(writer http.ResponseWriter, authPayload AuthPayload) {
@@ -77,7 +72,7 @@ func (app *Config) authenticate(writer http.ResponseWriter, authPayload AuthPayl
 	defer response.Body.Close()
 
 	if response.StatusCode == http.StatusUnauthorized {
-		common.ErrorJSON(writer, errors.New("invalid credentials"), http.StatusBadRequest)
+		common.ErrorJSON(writer, errors.New("invalid credentials"), http.StatusUnauthorized)
 		return
 	} else if response.StatusCode != http.StatusAccepted {
 		common.ErrorJSON(writer, errors.New("authentication service error"), http.StatusInternalServerError)
@@ -87,6 +82,10 @@ func (app *Config) authenticate(writer http.ResponseWriter, authPayload AuthPayl
 	var authResponse common.JsonResponse
 
 	err = json.NewDecoder(response.Body).Decode(&authResponse)
+	if err != nil {
+		common.ErrorJSON(writer, err)
+		return
+	}
 
 	if authResponse.Error {
 		common.ErrorJSON(writer, errors.New(authResponse.Message), http.StatusUnauthorized)
