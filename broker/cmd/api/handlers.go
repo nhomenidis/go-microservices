@@ -11,11 +11,17 @@ import (
 type RequestPayload struct {
 	Action string      `json:"action"`
 	Auth   AuthPayload `json:"auth,omitempty"`
+	Log    LogPayload  `json:"log,omitempty"`
 }
 
 type AuthPayload struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type LogPayload struct {
+	Name string `json:"name"`
+	Data string `json:"data"`
 }
 
 func (app *Config) Broker(writer http.ResponseWriter, request *http.Request) {
@@ -42,6 +48,8 @@ func (app *Config) HandleSubmission(writer http.ResponseWriter, request *http.Re
 	switch requestPayload.Action {
 	case "auth":
 		app.authenticate(writer, requestPayload.Auth)
+	case "log":
+		app.logItem(writer, requestPayload.Log)
 	default:
 		common.ErrorJSON(writer, errors.New("invalid action"), http.StatusBadRequest)
 	}
