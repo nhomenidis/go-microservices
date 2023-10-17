@@ -51,8 +51,8 @@ func main() {
 }
 
 // let's connect to the database
-func openDb(dsn string) (*sql.DB, error) {
-	db, err := sql.Open("pgx", dsn)
+func openDb(databaseUrl string) (*sql.DB, error) {
+	db, err := sql.Open("pgx", databaseUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -67,10 +67,10 @@ func openDb(dsn string) (*sql.DB, error) {
 }
 
 func connectToDb() *sql.DB {
-	dsn := os.Getenv("DSN")
+	databaseUrl := os.Getenv("DATABASE_URL")
 
 	for {
-		connection, err := openDb(dsn)
+		connection, err := openDb(databaseUrl)
 		if err != nil {
 			log.Println("Error connecting to database", err)
 			time.Sleep(2 * time.Second)
